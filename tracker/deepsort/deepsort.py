@@ -22,10 +22,10 @@ class config_args:
         display=True,
         cam=-1,
         image_size=512,
-        model_architecture="efficientdet_d0",
+        model_architecture="tf_efficientdet_d0",
         config_deepsort=r"./configs/deep_sort.yaml",
         save_path=r"C:\Users\USER\deepsort\deep_sort_pytorch\data\dataset\MOT16\train\MOT16-04",
-        config_effdet=r"C:\Users\USER\NTNU Lab Works\deepsort\deepsort\deep_sort_pytorch\weights_effdet\trained_weightsefficientdet_d0_512_2",
+        config_effdet=r"C:\Users\USER\Downloads\effdet_tf",
     ):
         self.VIDEO_PATH = VIDEO_PATH
         self.mmdet = mmdet
@@ -41,11 +41,11 @@ class config_args:
         self.display_height = 256
         self.readonly = True
         self.frame_interval = 1
-        self.prediction_confidence_threshold = (0.001,)
-        self.wbf_iou_threshold = (0.001,)
-        self.method_gaussian = (True,)
-        self.sigma = (2,)
-        self.score_threshold = (0.2,)
+        self.prediction_confidence_threshold = 0.001
+        self.wbf_iou_threshold = 0.001
+        self.method_gaussian = True
+        self.sigma = 2
+        self.score_threshold = 0.2
         self.num_classes = 1
         self.learning_rate = 0.009
 
@@ -67,12 +67,13 @@ def build_tracker(cfg, use_cuda):
 
 
 class VideoTracker(object):
-    def __init__(self, cfg, args, video_path,save_name):
+    def __init__(self, cfg, args, video_path,save_path,save_video_path):
         self.cfg = cfg
         self.args = args
         self.video_path = video_path
         self.logger = get_logger("root")
-        self.save_name = save_name
+        self.save_path = save_path
+        self.save_video_path = save_video_path
 
         use_cuda = torch.cuda.is_available()
         if not use_cuda:
@@ -108,8 +109,8 @@ class VideoTracker(object):
             os.makedirs(self.args.save_path, exist_ok=True)
 
             # path of saved video and results
-            self.save_video_path = os.path.join(self.args.save_path, "{0}.mp4".format(self.save_name))
-            self.save_results_path = os.path.join(self.args.save_path, "{0}.txt".format(self.save_name))
+            self.save_video_path = self.save_video_path
+            self.save_results_path = self.save_path
 
             # create video writer
             fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
@@ -157,7 +158,7 @@ class VideoTracker(object):
                 bbox_tlwh = []
                 bbox_xyxy = outputs[:, :4]
                 identities = outputs[:, -1]
-                ori_im = draw_boxes(ori_im,bbox_xyxy,identities)
+                ori_im = draw_boxes(ori_im,bbox_xyxy,identities,cls_conf)
                 for bb_xyxy in bbox_xyxy:
                     bbox_tlwh.append(self.deepsort._xyxy_to_tlwh(bb_xyxy))
 
@@ -182,15 +183,24 @@ class VideoTracker(object):
                 )
             )
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     args = config_args()
     cfg = get_config()
     cfg.USE_MMDET = False
     cfg.merge_from_file(args.config_deepsort)
     cfg.USE_FASTREID = False
-    with VideoTracker(cfg, args, video_path=args.VIDEO_PATH,save_name=args.save_path) as vdo_trk:
-        vdo_trk.run()
+    dataset_path = r"C:\Users\USER\tracking_dataset\gt\mot_challenge\MOT16-test"
+    save_path = r"C:\Users\USER\tracking_dataset\trackers\mot_challenge\MOT16-test\SSL_Deepsort\data"
+    seqs = os.listdir(dataset_path)
+    for seq in seqs:
+        save_name = seq + ".txt"
+        video_path = os.path.join(dataset_path,seq,'video/video.mp4')
+        video_save_path = os.path.join(save_path,seq,'video/results.mp4')
+        save_path_name = os.path.join(save_path,save_name)
+        print(save_path_name)
+        with VideoTracker(cfg,args,video_path,save_path_name,video_save_path) as vdo:
+            vdo.run()
+
 
 
 

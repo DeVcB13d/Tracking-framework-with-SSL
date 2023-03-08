@@ -71,7 +71,7 @@ class Net(nn.Module):
         # 256 1 1 
         self.reid = reid
         self.classifier = nn.Sequential(
-            nn.Linear(4608, 256),
+            nn.Linear(512, 256),
             nn.BatchNorm1d(256),
             nn.ReLU(inplace=True),
             nn.Dropout(),

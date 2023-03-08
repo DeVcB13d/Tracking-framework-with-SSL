@@ -12,13 +12,12 @@ from typing import List
 
 from ...tracker.deepsort.utils.softnms import run_soft_nms
 
-DEF_IMG_SIZE = 512
 
 # Creating the efficientdet model
-def create_model(image_size, architecture, num_classes=1):
-    config = get_efficientdet_config(architecture)
-    config.update({"num_classes": num_classes})
-    config.update({"image_size": (image_size, image_size)})
+def create_model(args):
+    config = get_efficientdet_config(args.model_architecture)
+    config.update({"num_classes": args.num_classes})
+    config.update({"image_size": (args.image_size, args.image_size)})
     net = EfficientDet(config, pretrained_backbone=True)
     net.class_net = HeadNet(config, num_outputs=config.num_classes,)
     net.box_net = HeadNet(config,num_outputs=4)
@@ -26,10 +25,24 @@ def create_model(image_size, architecture, num_classes=1):
 
 
 # Validation Trnasforms
-def get_valid_transforms(target_img_size=DEF_IMG_SIZE):
+def get_valid_transforms(args):
+    target_image_size = args.image_size
     return A.Compose(
         [
-            A.Resize(height=target_img_size, width=target_img_size, p=1),
+            A.Resize(height=target_image_size, width=target_image_size, p=1),
+            A.Normalize([0.485, 0.456, 0.406], [0.229, 0.256, 0.225]),
+            ToTensorV2(p=1),
+        ],
+        p=1.0,
+        bbox_params=A.BboxParams(
+            format="pascal_voc", min_area=0, min_visibility=0, label_fields=["labels"]
+        ),
+    )
+def get_train_transforms(args):
+    target_image_size = args.image_size
+    return A.Compose(
+        [
+            A.Resize(height=target_image_size, width=target_image_size, p=1),
             A.Normalize([0.485, 0.456, 0.406], [0.229, 0.256, 0.225]),
             ToTensorV2(p=1),
         ],
@@ -40,44 +53,37 @@ def get_valid_transforms(target_img_size=DEF_IMG_SIZE):
     )
 
 class EfficientDetModel(LightningModule):
-    def __init__(self, config):
+    def __init__(self, args):
         super().__init__()
-        self.img_size = config.image_size
-        self.model = create_model(
-            config.image_size, config.model_architecture, config.num_classes
-        )
-        self.inference_transforms = get_valid_transforms(
-            target_img_size=config.image_size
-        )
-        self.prediction_confidence_threshold = config.prediction_confidence_threshold
-        self.lr = config.learning_rate
-        self.wbf_iou_threshold = config.wbf_iou_threshold
-        self.inference_tfms = get_valid_transforms(config.image_size)
-        self.method_gaussian = config.method_gaussian
-        self.sigma = config.sigma
-        self.score_threshold = config.score_threshold
+        self.img_size = args.image_size
+        self.model = create_model(args)
+        self.prediction_confidence_threshold = args.prediction_confidence_threshold
+        self.lr = args.learning_rate
+        self.wbf_iou_threshold = args.wbf_iou_threshold
+        self.inference_tfms = get_valid_transforms(args)
+        self.sigma = args.sigma
+        self.score_threshold = args.score_threshold
 
     def forward(self, images, targets):
         return self.model(images, targets)
     
 
 class Efficientdet_detector:
-    def __init__(self, config):
-        self.config = config
-        self.weights = config.weights
-        self.model = EfficientDetModel(config)
-        self.model.load_state_dict(torch.load(config.weights))
+    def __init__(self, args):
+        self.args = args
+        self.weights = args.weights
+        self.model = EfficientDetModel(args)
+        self.model.load_state_dict(torch.load(args.weights))
         logger.info("model loaded successfully")
         self.inference_tfms = get_valid_transforms()
         self.device = torch.device("cuda")
         self.model.to(self.device)
         self.model.eval()
-        self.img_size = config.image_size
-        self.prediction_confidence_threshold = config.prediction_confidence_threshold
-        self.method_gaussian = config.method_gaussian
-        self.sigma = config.sigma
-        self.score_threshold = config.score_threshold
-        self.wbf_iou_threshold = config.wbf_iou_threshold
+        self.img_size = args.image_size
+        self.prediction_confidence_threshold = args.prediction_confidence_threshold
+        self.sigma = args.sigma
+        self.score_threshold = args.score_threshold
+        self.wbf_iou_threshold = args.wbf_iou_threshold
 
     def predict(self, images: List[np.ndarray]):
         """
@@ -96,7 +102,6 @@ class Efficientdet_detector:
             ]
         )
         return self._run_inference(images_tensor, image_sizes)
-
     def _run_inference(self, images_tensor, image_sizes):
         dummy_targets = self._create_dummy_inference_targets(
             num_images=images_tensor.shape[0]
@@ -145,7 +150,7 @@ class Efficientdet_detector:
             predicted_class_labels,
         ) = run_soft_nms(
             predictions,
-            method_gaussian=self.method_gaussian,
+            method_gaussian= True,
             sigma=self.sigma[0],
             iou_threshold=self.wbf_iou_threshold,
             score_threshold=self.score_threshold[0],
