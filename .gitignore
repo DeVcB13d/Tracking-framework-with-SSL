@@ -134,3 +134,6 @@ dmypy.json
 .\comparisons\mmdetection
 .\comparisons\MOTR
 .\comparisons\src
+
+# Config files
+*.t7
