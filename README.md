@@ -35,19 +35,6 @@ python .\run_mot_challenge.py
 # Results
 
 * Detailed results of our method is given in [detailed_results.txt](detailed_results)
-
-
-<style type="text/css">
-.tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-31dk{background-color:#ffccc9;border-color:inherit;font-weight:bold;text-align:left;vertical-align:top}
-.tg .tg-jew0{background-color:#fd6864;border-color:inherit;font-weight:bold;text-align:left;vertical-align:top}
-.tg .tg-smvl{background-color:#fd6864;border-color:inherit;text-align:left;vertical-align:top}
-.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
-</style>
 <table class="tg">
 <thead>
   <tr>
