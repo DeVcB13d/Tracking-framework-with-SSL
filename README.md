@@ -9,7 +9,7 @@ This is the repository containing all the implementations of Tracking by self-de
 
 1. Our model : SSL + EfficientDetD0 + Deepsort with trained association model
 
-The ReID model was trained for a total of 54 epochs and had an accuraccy of 92.94% on the test data. The trained weights are saved in "tracker\deepsort\deep_sort\deep\checkpoint\ckpt_dev_1.t7"
+The ReID model was trained for a total of 54 epochs and had an accuraccy of 92.94% on the test data.
 
 For running the model on test videos:
 1. Modify the dataset path in [deepsort.py](myLib/README.md)
