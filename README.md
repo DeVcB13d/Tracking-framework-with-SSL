@@ -36,7 +36,7 @@ python .\run_mot_challenge.py
 
 * Detailed results of our method is given in [detailed_results.txt](detailed_results)
 
-```
+
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;}
 .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
@@ -94,4 +94,3 @@ python .\run_mot_challenge.py
   </tr>
 </tbody>
 </table>
-```
