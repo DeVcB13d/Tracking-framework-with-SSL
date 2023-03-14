@@ -27,7 +27,8 @@ def draw_boxes(img, bbox,identities,cls_conf,offset=(0,0)):
         color = compute_color_for_labels(id)
         label = "pig-{0} {1}".format(id,conf)
         t_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_PLAIN, 4 , 2)[0]
-        cv2.rectangle(img,(x1, y1),(x2,y2),color,6)
+        cv2.rectangle(img,(x1, y1),(x2,y2),color,8)
+        cv2.rectangle(img,(x1, y1),(x2,y2),(255,255,255),1)
         cv2.rectangle(img,(x1, y1),(x1+t_size[0]+3,y1+t_size[1]+4), color,-1)
         cv2.putText(img,label,(x1,y1+t_size[1]+4), cv2.FONT_HERSHEY_PLAIN, 2, [255,255,255], 2)
     return img

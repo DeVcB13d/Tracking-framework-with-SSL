@@ -24,7 +24,7 @@ class config_args:
         image_size=512,
         model_architecture="tf_efficientdet_d0",
         config_deepsort=r"./configs/deep_sort.yaml",
-        save_path=r"C:\Users\USER\deepsort\deep_sort_pytorch\data\dataset\MOT16\train\MOT16-04",
+        save_path=r"C:\Users\USER\tracking_dataset\sample_results",
         config_effdet=r"C:\Users\USER\Downloads\effdet_tf",
     ):
         self.VIDEO_PATH = VIDEO_PATH
@@ -170,8 +170,8 @@ class VideoTracker(object):
                 cv2.imshow("test", ori_im)
                 cv2.waitKey(1)
 
-            if self.args.save_path:
-                self.writer.write(ori_im)
+            
+            self.writer.write(ori_im)
 
             # save results
             write_results(self.save_results_path, results, "mot")
@@ -189,17 +189,25 @@ if __name__ == '__main__':
     cfg.USE_MMDET = False
     cfg.merge_from_file(args.config_deepsort)
     cfg.USE_FASTREID = False
-    dataset_path = r"C:\Users\USER\tracking_dataset\gt\mot_challenge\MOT16-test"
-    save_path = r"C:\Users\USER\tracking_dataset\trackers\mot_challenge\MOT16-test\SSL_Deepsort\data"
-    seqs = os.listdir(dataset_path)
-    for seq in seqs:
-        save_name = seq + ".txt"
-        video_path = os.path.join(dataset_path,seq,'video/video.mp4')
-        video_save_path = os.path.join(save_path,seq,'video/results.mp4')
-        save_path_name = os.path.join(save_path,save_name)
-        print(save_path_name)
-        with VideoTracker(cfg,args,video_path,save_path_name,video_save_path) as vdo:
+    # dataset_path = r"C:\Users\USER\tracking_dataset\gt\mot_challenge\MOT16-test"
+    # save_path = r"C:\Users\USER\tracking_dataset\trackers\mot_challenge\MOT16-test\SSL_Deepsort\data"
+    # seqs = [""]
+    # for seq in seqs:
+    #     save_name = seq + ".txt"
+    #     video_path = os.path.join(dataset_path,seq,'video/video.mp4')
+    #     save_video = os.path.join(dataset_path,seq,'video/video_result.mp4')
+    #     video_save_path = os.path.join(save_path,seq,'video/results.mp4')
+    #     save_path_name = os.path.join(save_path,save_name)
+    #     print(save_path_name)
+    #     with VideoTracker(cfg,args,video_path,save_path_name,save_video) as vdo:
+    #         vdo.run()
+    video = r"C:\Users\USER\tracking_dataset\gt\mot_challenge\MOT16-test\MOT16-04\video\video.mp4"
+    save =  r"C:\Users\USER\tracking_dataset\sample_results\MOT16-04.txt"
+    save_video =  r"C:\Users\USER\tracking_dataset\sample_results\MOT16-04.mp4"
+    
+    with VideoTracker(cfg,args,video,save,save_video) as vdo:
             vdo.run()
+
 
 
 

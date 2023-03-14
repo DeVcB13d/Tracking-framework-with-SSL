@@ -13,17 +13,85 @@ The ReID model was trained for a total of 54 epochs and had an accuraccy of 92.9
 
 For running the model on test videos:
 1. Modify the dataset path in [deepsort.py](myLib/README.md)
-2.Run
-``python deepsort.py```
+2. Run
+```
+python deepsort.py
+```
 
 For evaluation of results:
 1. clone the github repository  git clone https://github.com/JonathonLuiten/TrackEval 
-2. change directory to : cd TrackEval\scripts
+2. change directory to :
+```
+cd TrackEval\scripts
+```
 3. run the script : 
 ```
 python .\run_mot_challenge.py 
-    --GT_FOLDER "C:\Users\USER\NTNU Lab Works\tracking_dataset\gt\mot_challenge" 
+    --GT_FOLDER ".dataset\gt" 
     --BENCHMARK "MOT16" 
-    --TRACKERS_FOLDER ".\tracking_dataset\trackers\mot_challenge" 
+    --TRACKERS_FOLDER ".\dataset\trackers" 
     --SPLIT_TO_EVAL "test"
+```
+# Results
+
+* Detailed results of our method is given in [detailed_results.txt](detailed_results)
+
+```
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-31dk{background-color:#ffccc9;border-color:inherit;font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-jew0{background-color:#fd6864;border-color:inherit;font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-smvl{background-color:#fd6864;border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-jew0">Method</th>
+    <th class="tg-smvl">HOTA(%)</th>
+    <th class="tg-smvl">MOTA(%)</th>
+    <th class="tg-jew0">IDF1(%)</th>
+    <th class="tg-jew0">IDSW</th>
+    <th class="tg-jew0">FRAG</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-31dk">SORT </td>
+    <td class="tg-0pky">30.71</td>
+    <td class="tg-0pky">75.7</td>
+    <td class="tg-0pky">53.40</td>
+    <td class="tg-0pky">11684</td>
+    <td class="tg-0pky">216</td>
+  </tr>
+  <tr>
+    <td class="tg-31dk">DEEPSORT</td>
+    <td class="tg-0pky">64.15</td>
+    <td class="tg-0pky">84.17</td>
+    <td class="tg-0pky">74.04</td>
+    <td class="tg-0pky">491</td>
+    <td class="tg-0pky">431</td>
+  </tr>
+  <tr>
+    <td class="tg-31dk">BYTETRACK </td>
+    <td class="tg-0pky">50.27</td>
+    <td class="tg-0pky">36.89</td>
+    <td class="tg-0pky">54.41</td>
+    <td class="tg-0pky">71</td>
+    <td class="tg-0pky">270</td>
+  </tr>
+  <tr>
+    <td class="tg-31dk">Proposed</td>
+    <td class="tg-0pky">67.86</td>
+    <td class="tg-0pky">84.74</td>
+    <td class="tg-0pky">80.94</td>
+    <td class="tg-0pky">165</td>
+    <td class="tg-0pky">335</td>
+  </tr>
+</tbody>
+</table>
 ```
